@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Binary Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #4e54c8, #8f94fb);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 3em;
+            padding: 20px;
+        }
+
+        .welcome-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #4e54c8;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.8s;
+        }
+
+        .welcome-btn:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Calculator Container */
+        .calculator {
+            display: none;
+            max-width: 100%;
+            width: 90vw;
+            height: auto;
+            max-width: 350px;
+            margin: 5vh auto;
+            padding: 20px;
+            border-radius: 10px;
+            background: #282c34;
+            color: #ffffff;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .calculator h1 {
+            font-size: 1.8em;
+            text-align: center;
+            color: #8f94fb;
+            margin-bottom: 20px;
+        }
+
+        .textview {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            color: #282c34;
+            background-color: #e0e0e0;
+            text-align: right;
+            overflow: hidden;
+        }
+
+        /* Button Grid */
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .btn {
+            font-size: 1.5em;
+            padding: 20px;
+            border-radius: 8px;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-operator {
+            background: #4e54c8;
+        }
+
+        .btn-number {
+            background: #6c757d;
+        }
+
+        .btn-equal {
+            background: #34c759;
+            grid-row: span 2;
+            height: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .calculator {
+                width: 90%;
+                padding: 15px;
+            }
+
+            .btn {
+                font-size: 1.2em;
+                padding: 15px;
+            }
+
+            .textview {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="welcome-screen" id="welcomeScreen">
+    <h5>Welcome to the Binary Calculator!</h5>
+   <h6> You can never get the answer you looking for </h6>
+    <h6>But you can use it as a binary converter</h6>
+    <button class="welcome-btn" onclick="enterCalculator()">Jump into it !</button>
+</div>
+
+<div class="calculator" id="calculator">
+    <h1>Binary Calculator</h1>
+    <form name="form1">
+        <input class="textview" name="textview" readonly>
+    </form>
+    <div class="button-grid">
+        <button class="btn btn-operator" onclick="clearDisplay()">C</button>
+        <button class="btn btn-operator" onclick="backspace()">B</button>
+        <button class="btn btn-operator" onclick="insert('/')">/</button>
+        <button class="btn btn-operator" onclick="insert('*')">x</button>
+        
+        <button class="btn btn-number" onclick="insert(7)">7</button>
+        <button class="btn btn-number" onclick="insert(8)">8</button>
+        <button class="btn btn-number" onclick="insert(9)">9</button>
+        <button class="btn btn-operator" onclick="insert('-')">-</button>
+        
+        <button class="btn btn-number" onclick="insert(4)">4</button>
+        <button class="btn btn-number" onclick="insert(5)">5</button>
+        <button class="btn btn-number" onclick="insert(6)">6</button>
+        <button class="btn btn-operator" onclick="insert('+')">+</button>
+        
+        <button class="btn btn-number" onclick="insert(1)">1</button>
+        <button class="btn btn-number" onclick="insert(2)">2</button>
+        <button class="btn btn-number" onclick="insert(3)">3</button>
+        <button class="btn btn-equal" onclick="equal()">=</button>
+        
+        <button class="btn btn-number" style="grid-column: span 2;" onclick="insert(0)">0</button>
+        <button class="btn btn-number" onclick="insert('.')">.</button>
+    </div>
+</div>
+
+<script>
+let isResultDisplayed = false;
+
+function enterCalculator() {
+    document.getElementById("welcomeScreen").style.display = "none";
+    document.getElementById("calculator").style.display = "block";
+}
+
+function insert(num) {
+    if (isResultDisplayed) {
+        document.form1.textview.value = '';
+        isResultDisplayed = false;
+    }
+    document.form1.textview.value += num;
+}
+
+function toBinaryInt(integer) {
+    return integer.toString(2);
+}
+
+function toBinaryFraction(fraction) {
+    let binaryFraction = '';
+    let precision = 8;
+    while (fraction > 0 && precision > 0) {
+        fraction *= 2;
+        if (fraction >= 1) {
+            binaryFraction += '1';
+            fraction -= 1;
+        } else {
+            binaryFraction += '0';
+        }
+        precision--;
+    }
+    return binaryFraction;
+}
+
+function equal() {
+    let exp = document.form1.textview.value;
+    if (exp) {
+        let result = eval(exp);
+        let binaryResult;
+        if (Number.isInteger(result)) {
+            binaryResult = toBinaryInt(result);
+        } else {
+            const integerPart = Math.floor(result);
+            const fractionalPart = result - integerPart;
+            binaryResult = toBinaryInt(integerPart) + '.' + toBinaryFraction(fractionalPart);
+        }
+        document.form1.textview.value = binaryResult;
+        isResultDisplayed = true;
+    }
+}
+
+function clearDisplay() {
+    document.form1.textview.value = '';
+    isResultDisplayed = false;
+}
+
+function backspace() {
+    let exp = document.form1.textview.value;
+    document.form1.textview.value = exp.substring(0, exp.length - 1);
+}
+</script>
+
+</body>
+</html>
